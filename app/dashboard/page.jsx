@@ -7,10 +7,10 @@ import InterviewList from './_components/InterviewList';
 import { db } from '@/utils/db';
 import { MockInterview } from '@/utils/schema';
 import { desc, eq } from 'drizzle-orm';
+import { userAnswer } from '@/utils/schema';
 
 // Dashboard Stats Component
-function DashboardStats({ interviewCount, user }) {
-  // You can enhance these stats with real data from your DB if available
+function DashboardStats({ interviewCount, user, questionsAnswered, questionsAsked, avgFeedback }) {
   const stats = [
     {
       title: "Total Interviews",
@@ -27,8 +27,8 @@ function DashboardStats({ interviewCount, user }) {
       bgColor: "from-purple-50 to-purple-100"
     },
     {
-      title: "Success Rate",
-      value: interviewCount > 0 ? "85%" : "—",
+      title: "Avg Feedback",
+      value: avgFeedback,
       icon: <TrendingUp className="w-8 h-8" />,
       color: "from-green-500 to-green-600",
       bgColor: "from-green-50 to-green-100"
@@ -43,18 +43,18 @@ function DashboardStats({ interviewCount, user }) {
   ];
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8">
       {stats.map((stat, idx) => (
         <div
           key={idx}
-          className={`bg-gradient-to-br ${stat.bgColor} rounded-2xl p-6 border border-white shadow-sm hover:shadow-md transition-shadow duration-300`}
+          className={`bg-gradient-to-br ${stat.bgColor} rounded-2xl p-4 sm:p-6 border border-white shadow-sm hover:shadow-md transition-shadow duration-300 flex flex-col justify-between`}
         >
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
-              <p className="text-3xl font-bold text-gray-900">{stat.value}</p>
+              <p className="text-xs sm:text-sm font-medium text-gray-600 mb-1">{stat.title}</p>
+              <p className="text-2xl sm:text-3xl font-bold text-gray-900">{stat.value}</p>
             </div>
-            <div className={`w-16 h-16 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center text-white shadow-lg`}>
+            <div className={`w-10 h-10 sm:w-16 sm:h-16 bg-gradient-to-r ${stat.color} rounded-2xl flex items-center justify-center text-white shadow-lg`}>
               {stat.icon}
             </div>
           </div>
@@ -67,18 +67,46 @@ function DashboardStats({ interviewCount, user }) {
 function Dashboard() {
   const { user } = useUser();
   const [interviewList, setInterviewList] = useState([]);
+  const [questionsAnswered, setQuestionsAnswered] = useState(0);
+  const [questionsAsked, setQuestionsAsked] = useState(0);
+  const [avgFeedback, setAvgFeedback] = useState('—');
 
   useEffect(() => {
-    if (user) GetInterviewList();
+    if (user) {
+      GetInterviewList();
+      GetUserAnswerStats();
+    }
     // eslint-disable-next-line
   }, [user]);
 
+  // Fetch interview list as before
   const GetInterviewList = async () => {
     const result = await db.select()
       .from(MockInterview)
       .where(eq(MockInterview.createdBy, user?.primaryEmailAddress?.emailAddress))
       .orderBy(desc(MockInterview.id));
     setInterviewList(result);
+  };
+
+  // Fetch user answer stats for avg feedback
+  const GetUserAnswerStats = async () => {
+    const result = await db.select()
+      .from(userAnswer)
+      .where(eq(userAnswer.userEmail, user?.primaryEmailAddress?.emailAddress));
+    const totalQuestions = result.length;
+    const answeredQuestions = result.filter(
+      (row) => row.userAns && row.userAns.trim() !== ''
+    ).length;
+    setQuestionsAsked(totalQuestions);
+    setQuestionsAnswered(answeredQuestions);
+    // Calculate avg feedback (ratings out of 5, display out of 10)
+    const validRatings = result
+      .map(row => parseFloat(row.rating))
+      .filter(r => !isNaN(r));
+    const avg = validRatings.length > 0
+      ? (validRatings.reduce((sum, r) => sum + r, 0) / validRatings.length * 2).toFixed(1)
+      : '—';
+    setAvgFeedback(avg);
   };
 
   return (
@@ -107,7 +135,7 @@ function Dashboard() {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Stats */}
-        <DashboardStats interviewCount={interviewList.length} user={user} />
+        <DashboardStats interviewCount={interviewList.length} user={user} questionsAnswered={questionsAnswered} questionsAsked={questionsAsked} avgFeedback={avgFeedback} />
 
         {/* Create New Interview Section */}
         <div className="mb-8">
