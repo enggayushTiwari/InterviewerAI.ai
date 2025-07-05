@@ -32,6 +32,26 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Simulating a Successful Payment with Razorpay (Test Mode)
+
+This project uses Razorpay in test mode for payment simulation. You can test the payment flow without real money:
+
+1. **Start the app locally** and go to the upgrade/payment page.
+2. Choose a paid plan and proceed to pay (Razorpay modal will open).
+3. Select **UPI** as the payment method.
+4. Enter the following test UPI ID:
+
+   ```
+   test@razorpay
+   ```
+
+5. Click **Pay**. The payment will be simulated as successful.
+6. You will see a success message and your subscription/upgrade will be processed in the app.
+
+**Note:**
+- You can use any of Razorpay's [test payment methods](https://razorpay.com/docs/payments/payment-gateway/test-card-upi-details/) for more scenarios.
+- No real money is involved in test mode.
+
 ## Deploy on Vercel
 
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
