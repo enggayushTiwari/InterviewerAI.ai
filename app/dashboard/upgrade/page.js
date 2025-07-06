@@ -36,7 +36,7 @@ export default function UpgradePage() {
     {
       id: 'pro',
       name: 'Professional',
-      price: 29,
+      price: 1,
       popular: true,
       description: 'Ideal for serious job seekers',
       features: [
