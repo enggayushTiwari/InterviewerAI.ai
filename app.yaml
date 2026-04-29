@@ -1,0 +1,9 @@
+runtime: nodejs20
+env: standard
+
+instance_class: F1
+
+entrypoint: npm start
+
+env_variables:
+  NODE_ENV: "production"

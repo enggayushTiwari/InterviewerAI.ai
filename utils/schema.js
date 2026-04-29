@@ -1,5 +1,4 @@
 import { pgTable, serial, text, varchar } from "drizzle-orm/pg-core";
-import { use } from "react";
 
 export const MockInterview = pgTable('mockInterview', {
     id: serial('id').primaryKey(),

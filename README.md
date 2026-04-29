@@ -1,5 +1,5 @@
 About
-This is an AI based mock interviewing platform made using Google Gemini API use test credentials ayushtiwari8t@gmail.com and Password: Projects@321@
+This is an AI based mock interviewing platform made using Google Gemini API use test credentials ayushtiwari8t@gmail.com and Password: Projects@321@ or you can sign up using email.
 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 

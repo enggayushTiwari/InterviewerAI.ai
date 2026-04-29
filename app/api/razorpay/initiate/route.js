@@ -24,10 +24,10 @@ export async function POST(req) {
   let order;
   try {
     order = await instance.orders.create({
-      amount: amount,
-      currency: "INR",
-      receipt: "receipt_order_" + Date.now(),
-    });
+    amount: amount,
+    currency: "INR",
+    receipt: "receipt_order_" + Date.now(),
+  });
   } catch (error) {
     console.error('Razorpay order creation failed:', error);
     return new Response(
